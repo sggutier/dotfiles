@@ -29,7 +29,7 @@
       gl = "git log --oneline";
     };
 
-    initExtra = ''
+    initContent = ''
       # Additional zsh configuration can go here
     '';
   };

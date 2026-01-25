@@ -4,6 +4,13 @@
 {
   imports = [
     ./hardware.nix
+    ../../modules/nixos/common.nix
+    ../../modules/nixos/laptop.nix
+    ../../modules/nixos/dev/rust.nix
+    ../../modules/nixos/dev/node.nix
+    ../../modules/nixos/dev/python.nix
+    ../../modules/nixos/dev/java.nix
+    ../../modules/nixos/dev/tools.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -31,7 +38,7 @@
   # Plasma 6 Desktop Environment
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
-  services.xserver.displayManager.gdm.settings = { Theme = { CursorTheme = "breeze_cursors"; }; };
+  services.displayManager.gdm.settings = { Theme = { CursorTheme = "breeze_cursors"; }; };
 
   # Programs
   programs.zsh.enable = true;
@@ -131,24 +138,10 @@
   # Suspend-then-hibernate
   systemd.sleep.extraConfig = "HibernateDelaySec=2h";
 
-  # System packages
-  environment.systemPackages = with pkgs; [
-    vim
-    wget
-    git
-    htop
-    curl
-    cmake
-    gcc
-    gnumake
-    zip
-    unzip
-    python3
-    libvirt
-    virt-manager
-    cacert
-    tree
-  ];
+  # Enable common system packages module
+  modules.common.enable = true;
+  modules.common.devTools.enable = true;
+  modules.common.virtualization.enable = true;
 
   # Enable laptop-specific packages
   modules.laptop.enable = true;

@@ -28,29 +28,40 @@
           config.allowUnfree = true;
         };
       };
+
+      # Helper function to create a NixOS system configuration
+      mkHost = { hostname, userConfig }: nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit inputs; };
+        modules = [
+          # Apply unstable overlay
+          { nixpkgs.overlays = [ unstableOverlay ]; }
+
+          # Host configuration
+          ./hosts/${hostname}
+
+          # Home Manager as a NixOS module
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+            home-manager.users.sggutier = { ... }: {
+              imports = [
+                ./home/sggutier
+                userConfig
+              ];
+            };
+            home-manager.extraSpecialArgs = { inherit inputs; };
+          }
+        ];
+      };
     in
     {
       nixosConfigurations = {
-        enkidu = nixpkgs.lib.nixosSystem {
-          inherit system;
-          specialArgs = { inherit inputs; };
-          modules = [
-            # Apply unstable overlay
-            { nixpkgs.overlays = [ unstableOverlay ]; }
-
-            # Host configuration
-            ./hosts/enkidu
-
-            # Home Manager as a NixOS module
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "backup";
-              home-manager.users.sggutier = import ./home/sggutier;
-              home-manager.extraSpecialArgs = { inherit inputs; };
-            }
-          ];
+        enkidu = mkHost {
+          hostname = "enkidu";
+          userConfig = ./home/sggutier/enkidu.nix;
         };
       };
 
