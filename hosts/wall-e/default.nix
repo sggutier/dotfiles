@@ -25,6 +25,23 @@
   # Time and locale
   time.timeZone = "America/Los_Angeles";
   i18n.defaultLocale = "en_US.UTF-8";
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "en_US.UTF-8";
+    LC_IDENTIFICATION = "en_US.UTF-8";
+    LC_MEASUREMENT = "en_US.UTF-8";
+    LC_MONETARY = "en_US.UTF-8";
+    LC_NAME = "en_US.UTF-8";
+    LC_NUMERIC = "en_US.UTF-8";
+    LC_PAPER = "en_US.UTF-8";
+    LC_TELEPHONE = "en_US.UTF-8";
+    LC_TIME = "en_US.UTF-8";
+  };
+
+  # Keyboard layout (Dvorak Programmer)
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "dvp";
+  };
 
   # Enable common system packages
   modules.common.enable = true;
@@ -35,6 +52,12 @@
   # Shell
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
+
+  # GPG agent with SSH support
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
 
   # SSH configuration - enabled with password and key auth
   services.openssh = {
@@ -59,5 +82,5 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.11";
 }

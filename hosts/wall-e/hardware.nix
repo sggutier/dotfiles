@@ -1,6 +1,5 @@
 # Hardware configuration for wall-e
-# TODO: Replace this with actual hardware configuration from the target machine
-# Run `nixos-generate-config` on the target machine and copy the hardware-configuration.nix here
+# Generated from nixos-generate-config on the target machine
 { config, lib, pkgs, modulesPath, ... }:
 
 {
@@ -8,10 +7,9 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  # Placeholder boot configuration - update for your actual hardware
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "usbhid" "sd_mod" "sdhci_pci" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];  # Or "kvm-amd" for AMD CPUs
+  boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
@@ -31,6 +29,6 @@
 
   networking.useDHCP = lib.mkDefault true;
 
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  # For AMD CPUs, use: hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
