@@ -63,6 +63,11 @@
           hostname = "enkidu";
           userConfig = ./home/sggutier/enkidu.nix;
         };
+
+        wall-e = mkHost {
+          hostname = "wall-e";
+          userConfig = ./home/sggutier/wall-e.nix;
+        };
       };
 
       # Standalone home-manager configuration (optional, for non-NixOS systems)
