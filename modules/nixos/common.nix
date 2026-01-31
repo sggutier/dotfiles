@@ -32,6 +32,7 @@
         usbutils
         pciutils
         nix-index
+        screen
       ]
       ++ lib.optionals config.modules.common.devTools.enable [
         cmake
