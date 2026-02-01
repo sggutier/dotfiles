@@ -5,6 +5,7 @@
   imports = [
     ./hardware.nix
     ../../modules/nixos/common.nix
+    ../../modules/nixos/nas.nix
     ../../modules/nixos/dev/rust.nix
     ../../modules/nixos/dev/node.nix
     ../../modules/nixos/dev/python.nix
@@ -49,6 +50,21 @@
   modules.common.devTools.enable = false;
   modules.common.virtualization.enable = false;
 
+  # NAS configuration
+  modules.nas = {
+    enable = true;
+    poolName = "tank";
+    datasets.share = {
+      mountpoint = "/tank/share";
+      share = true;
+    };
+    samba.enable = true;
+    nfs = {
+      enable = true;
+      allowedNetworks = [ "192.168.1.0/24" ];
+    };
+  };
+
   # Shell
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
@@ -73,7 +89,7 @@
   users.users.sggutier = {
     isNormalUser = true;
     description = "Saul Gutierrez";
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = [ "wheel" "networkmanager" "nas" ];
     openssh.authorizedKeys.keys = [
       # Add your SSH public keys here
       # "ssh-ed25519 AAAA... user@host"

@@ -1,5 +1,33 @@
-# Hardware configuration for wall-e
+# Hardware configuration for wall-e (NAS)
 # Generated from nixos-generate-config on the target machine
+#
+# ZFS Pool Setup (one-time, after first boot):
+#
+# 1. Identify drives:
+#    lsblk -o NAME,SIZE,MODEL,SERIAL
+#    ls -la /dev/disk/by-id/
+#
+# 2. Create mirror pool with 4TB drives (use legacy mountpoint for NixOS control):
+#    sudo zpool create -o ashift=12 \
+#      -O acltype=posixacl \
+#      -O xattr=sa \
+#      -O compression=lz4 \
+#      -O atime=off \
+#      -O mountpoint=none \
+#      tank mirror /dev/disk/by-id/DISK1 /dev/disk/by-id/DISK2
+#
+# 3. Add L2ARC cache with 1TB drive:
+#    sudo zpool add tank cache /dev/disk/by-id/CACHE_DISK
+#
+# 4. Create dataset with legacy mountpoint (NixOS manages the actual mount):
+#    sudo zfs create -o mountpoint=legacy tank/share
+#
+# 5. Set up Samba password for your user:
+#    sudo smbpasswd -a sggutier
+#
+# Note: Mounting and permissions are handled declaratively by NixOS via
+# fileSystems and systemd.tmpfiles.rules in the nas module.
+#
 { config, lib, pkgs, modulesPath, ... }:
 
 {
