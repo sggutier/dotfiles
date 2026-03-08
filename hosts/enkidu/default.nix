@@ -98,6 +98,7 @@
   virtualisation.libvirtd = {
     enable = true;
     qemu.swtpm.enable = true;
+    qemu.vhostUserPackages = [ pkgs.virtiofsd ];
   };
 
   # Input
