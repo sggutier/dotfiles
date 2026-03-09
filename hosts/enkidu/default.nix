@@ -11,6 +11,7 @@
     ../../modules/nixos/dev/python.nix
     ../../modules/nixos/dev/java.nix
     ../../modules/nixos/dev/tools.nix
+    ../../modules/nixos/dev/go.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -153,6 +154,7 @@
   modules.dev.python.enable = true;
   modules.dev.java.enable = true;
   modules.dev.tools.enable = true;
+  modules.dev.go.enable = true;
 
   nixpkgs.config.allowUnfree = true;
 
