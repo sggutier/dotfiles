@@ -7,17 +7,17 @@
 #    lsblk -o NAME,SIZE,MODEL,SERIAL
 #    ls -la /dev/disk/by-id/
 #
-# 2. Create mirror pool with 4TB drives (use legacy mountpoint for NixOS control):
+# 2. Create raidz1 pool with 3x 4TB NVMe drives (use legacy mountpoint for NixOS control):
 #    sudo zpool create -o ashift=12 \
 #      -O acltype=posixacl \
 #      -O xattr=sa \
 #      -O compression=lz4 \
 #      -O atime=off \
 #      -O mountpoint=none \
-#      tank mirror /dev/disk/by-id/DISK1 /dev/disk/by-id/DISK2
-#
-# 3. Add L2ARC cache with 1TB drive:
-#    sudo zpool add tank cache /dev/disk/by-id/CACHE_DISK
+#      tank raidz \
+#      /dev/disk/by-id/nvme-WD_Blue_SN5000_4TB_25166V800054 \
+#      /dev/disk/by-id/nvme-WD_Blue_SN5000_4TB_25166V800115 \
+#      /dev/disk/by-id/nvme-TEAM_TM8FFD004T_TPBF2502070080300834
 #
 # 4. Create dataset with legacy mountpoint (NixOS manages the actual mount):
 #    sudo zfs create -o mountpoint=legacy tank/share
