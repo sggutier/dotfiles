@@ -9,6 +9,18 @@
       ((emacsPackagesFor emacs).emacsWithPackages (epkgs: [
         epkgs.vterm
       ]))
+      # Python deps required by lsp-bridge (https://github.com/manateelazycat/lsp-bridge)
+      (python3.withPackages (ps: with ps; [
+        epc
+        orjson
+        sexpdata
+        six
+        setuptools
+        paramiko
+        rapidfuzz
+        watchdog
+        packaging
+      ]))
     ];
   };
 }
