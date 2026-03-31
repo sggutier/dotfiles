@@ -8,6 +8,12 @@ in
   options.modules.nas = {
     enable = lib.mkEnableOption "NAS functionality with ZFS storage";
 
+    encrypted = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Whether the ZFS pool uses native encryption with a keyfile at /etc/zfs/<poolName>.key";
+    };
+
     poolName = lib.mkOption {
       type = lib.types.str;
       default = "tank";
@@ -91,6 +97,21 @@ in
     boot.supportedFilesystems = [ "zfs" ];
     boot.zfs.forceImportRoot = false;
     boot.zfs.extraPools = [ cfg.poolName ];
+
+    # Load ZFS encryption key from file on encrypted root
+    systemd.services."zfs-load-key-${cfg.poolName}" = lib.mkIf cfg.encrypted {
+      description = "Load ZFS encryption key for ${cfg.poolName}";
+      requires = [ "zfs-import-${cfg.poolName}.service" ];
+      after = [ "zfs-import-${cfg.poolName}.service" ];
+      before = [ "zfs-mount.service" ];
+      wantedBy = [ "zfs-mount.service" ];
+      unitConfig.DefaultDependencies = false;
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.zfs}/bin/zfs load-key ${cfg.poolName} 2>&1 || echo \"Key already loaded, continuing\"'";
+      };
+    };
 
     services.zfs.autoScrub.enable = true;
     services.zfs.autoSnapshot = {

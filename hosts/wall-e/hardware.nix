@@ -1,32 +1,29 @@
 # Hardware configuration for wall-e (NAS)
-# Generated from nixos-generate-config on the target machine
 #
-# ZFS Pool Setup (one-time, after first boot):
+# Disk layout:
+#   nvme0n1 (1TB TWSC) - OS drive:
+#     p1: 1GB   ESP (FAT32)
+#     p2: 16GB  swap (LUKS)
+#     p3: 800GB root (LUKS -> ext4)
+#     p4: 137GB ZFS L2ARC cache
 #
-# 1. Identify drives:
-#    lsblk -o NAME,SIZE,MODEL,SERIAL
-#    ls -la /dev/disk/by-id/
+#   nvme1n1 (WD Blue SN5000 4TB)  \
+#   nvme2n1 (WD Blue SN5000 4TB)   } ZFS raidz1 "tank" (~7.1TB usable)
+#   nvme3n1 (TEAM TM8FFD004T 4TB) /   native encryption (aes-256-gcm)
 #
-# 2. Create raidz1 pool with 3x 4TB NVMe drives (use legacy mountpoint for NixOS control):
-#    sudo zpool create -o ashift=12 \
-#      -O acltype=posixacl \
-#      -O xattr=sa \
-#      -O compression=lz4 \
-#      -O atime=off \
-#      -O mountpoint=none \
-#      tank raidz \
-#      /dev/disk/by-id/nvme-WD_Blue_SN5000_4TB_25166V800054 \
-#      /dev/disk/by-id/nvme-WD_Blue_SN5000_4TB_25166V800115 \
-#      /dev/disk/by-id/nvme-TEAM_TM8FFD004T_TPBF2502070080300834
+#   mmcblk0 (58GB eMMC) - ZFS SLOG (write cache)
 #
-# 4. Create dataset with legacy mountpoint (NixOS manages the actual mount):
-#    sudo zfs create -o mountpoint=legacy tank/share
+# Encryption:
+#   LUKS (root + swap): TPM2 auto-unlock + passphrase fallback
+#   ZFS (tank): keyfile at /etc/zfs/tank.key (on encrypted root) + passphrase fallback
 #
-# 5. Set up Samba password for your user:
-#    sudo smbpasswd -a sggutier
+# Post-install setup:
+#   1. Enroll TPM2 for LUKS auto-unlock:
+#      sudo systemd-cryptenroll --tpm2-device=auto /dev/nvme0n1p3
+#      sudo systemd-cryptenroll --tpm2-device=auto /dev/nvme0n1p2
 #
-# Note: Mounting and permissions are handled declaratively by NixOS via
-# fileSystems and systemd.tmpfiles.rules in the nas module.
+#   2. Set up Samba password:
+#      sudo smbpasswd -a sggutier
 #
 { config, lib, pkgs, modulesPath, ... }:
 
@@ -35,24 +32,39 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "usbhid" "sd_mod" "sdhci_pci" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "usbhid" "sd_mod" "sdhci_pci" "tpm_tis" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
+  # Use systemd initrd for TPM2 LUKS unlock
+  boot.initrd.systemd.enable = true;
+
+  # LUKS encrypted root
+  boot.initrd.luks.devices."cryptroot" = {
+    device = "/dev/disk/by-uuid/7311fdce-abc7-49ef-a033-1f84d897b6b6";
+    crypttabExtraOpts = [ "tpm2-device=auto" ];
+  };
+
+  # LUKS encrypted swap
+  boot.initrd.luks.devices."cryptswap" = {
+    device = "/dev/disk/by-uuid/235cef55-2331-4c06-86a8-7cd530cd01ae";
+    crypttabExtraOpts = [ "tpm2-device=auto" ];
+  };
+
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/18e29c94-ae87-4209-bd58-2f23b3ff9e0a";
+    device = "/dev/mapper/cryptroot";
     fsType = "ext4";
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/499A-0BA1";
+    device = "/dev/disk/by-uuid/224C-C162";
     fsType = "vfat";
     options = [ "fmask=0077" "dmask=0077" ];
   };
 
   swapDevices = [
-    { device = "/dev/disk/by-uuid/2665aec3-1d0f-40a5-a5a1-f2e9d7186cb8"; }
+    { device = "/dev/mapper/cryptswap"; }
   ];
 
   networking.useDHCP = lib.mkDefault true;

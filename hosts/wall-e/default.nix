@@ -54,6 +54,7 @@
   modules.nas = {
     enable = true;
     poolName = "tank";
+    encrypted = true;
     datasets.share = {
       mountpoint = "/tank/share";
       share = true;
@@ -61,7 +62,7 @@
     samba.enable = true;
     nfs = {
       enable = true;
-      allowedNetworks = [ "192.168.1.0/24" ];
+      allowedNetworks = [ "192.168.0.0/24" ];
     };
   };
 
