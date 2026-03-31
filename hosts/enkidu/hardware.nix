@@ -12,22 +12,11 @@
   boot.initrd.kernelModules = [ ];
   boot.supportedFilesystems = [ "ntfs" ];
   boot.kernelModules = [ "kvm-intel" "v4l2loopback" ];
-  boot.kernelParams = [ "module_blacklist=hid_sensor_hub" "resume_offset=155127808" ];
+  boot.kernelParams = [ "resume_offset=155127808" ];
 
   # Laptop power management
   services.thermald.enable = true;
   services.power-profiles-daemon.enable = true;
-  services.auto-cpufreq.enable = false;
-  services.auto-cpufreq.settings = {
-    battery = {
-      governor = "powersave";
-      turbo = "never";
-    };
-    charger = {
-      governor = "performance";
-      turbo = "auto";
-    };
-  };
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/5b4b2bc5-27f3-4ff1-956c-d018b64ffa89";
@@ -54,14 +43,4 @@
   networking.useDHCP = lib.mkDefault true;
 
   hardware.bluetooth.enable = true;
-  hardware.enableRedistributableFirmware = true;
-
-  hardware.graphics.extraPackages = with pkgs; [
-    mesa
-    intel-vaapi-driver
-    libva-vdpau-driver
-    intel-media-driver
-  ];
-
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

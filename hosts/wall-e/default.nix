@@ -13,8 +13,6 @@
     ../../modules/nixos/dev/tools.nix
   ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
   # Boot loader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;

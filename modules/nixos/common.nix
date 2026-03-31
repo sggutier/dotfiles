@@ -10,38 +10,43 @@
     virtualization.enable = lib.mkEnableOption "Virtualization tools (libvirt, virt-manager)";
   };
 
-  config = lib.mkIf config.modules.common.enable {
-    environment.systemPackages = with pkgs;
-      [
-        vim
-        wget
-        git
-        htop
-        btop
-        curl
-        zip
-        unzip
-        unrar
-        python3
-        sapling
-        tree
-        cacert
-        ripgrep
-        fd
-        fastfetch
-        usbutils
-        pciutils
-        nix-index
-        screen
-      ]
-      ++ lib.optionals config.modules.common.devTools.enable [
-        cmake
-        gcc
-        gnumake
-      ]
-      ++ lib.optionals config.modules.common.virtualization.enable [
-        libvirt
-        virt-manager
-      ];
-  };
+  config = lib.mkMerge [
+    {
+      nix.settings.experimental-features = [ "nix-command" "flakes" ];
+    }
+    (lib.mkIf config.modules.common.enable {
+      environment.systemPackages = with pkgs;
+        [
+          vim
+          wget
+          git
+          htop
+          btop
+          curl
+          zip
+          unzip
+          unrar
+          python3
+          sapling
+          tree
+          cacert
+          ripgrep
+          fd
+          fastfetch
+          usbutils
+          pciutils
+          nix-index
+          screen
+        ]
+        ++ lib.optionals config.modules.common.devTools.enable [
+          cmake
+          gcc
+          gnumake
+        ]
+        ++ lib.optionals config.modules.common.virtualization.enable [
+          libvirt
+          virt-manager
+        ];
+    })
+  ];
 }

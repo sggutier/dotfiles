@@ -4,6 +4,7 @@
 {
   imports = [
     ./hardware.nix
+    inputs.nixos-hardware.nixosModules.framework-12th-gen-intel
     ../../modules/nixos/common.nix
     ../../modules/nixos/laptop.nix
     ../../modules/nixos/dev/rust.nix
@@ -13,8 +14,6 @@
     ../../modules/nixos/dev/tools.nix
     ../../modules/nixos/dev/go.nix
   ];
-
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Boot loader
   boot.loader.systemd-boot.enable = true;
@@ -77,13 +76,6 @@
     publish.addresses = true;
     publish.workstation = true;
     openFirewall = true;
-  };
-
-  # Fingerprint
-  services.fprintd.enable = true;
-  systemd.services.fprintd = {
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig.Type = "simple";
   };
 
   # Audio (PipeWire)
