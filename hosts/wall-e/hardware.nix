@@ -42,13 +42,13 @@
 
   # LUKS encrypted root
   boot.initrd.luks.devices."cryptroot" = {
-    device = "/dev/disk/by-uuid/7311fdce-abc7-49ef-a033-1f84d897b6b6";
+    device = "/dev/disk/by-partlabel/cryptroot";
     crypttabExtraOpts = [ "tpm2-device=auto" ];
   };
 
   # LUKS encrypted swap
   boot.initrd.luks.devices."cryptswap" = {
-    device = "/dev/disk/by-uuid/235cef55-2331-4c06-86a8-7cd530cd01ae";
+    device = "/dev/disk/by-partlabel/cryptswap";
     crypttabExtraOpts = [ "tpm2-device=auto" ];
   };
 
@@ -58,7 +58,7 @@
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/224C-C162";
+    device = "/dev/disk/by-partlabel/efi";
     fsType = "vfat";
     options = [ "fmask=0077" "dmask=0077" ];
   };
