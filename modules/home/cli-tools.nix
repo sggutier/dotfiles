@@ -6,7 +6,6 @@
 
   config = lib.mkIf config.modules.cli-tools.enable {
     home.packages = with pkgs; [
-      unstable.claude-code
       pass
       podman-tui
     ];

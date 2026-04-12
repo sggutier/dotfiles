@@ -5,8 +5,9 @@
 
 {
   imports = [
-    # Shell configuration (always enabled)
+    # Always-enabled modules
     ../../modules/home/shell.nix
+    ../../modules/home/claude.nix
 
     # Optional modules (enabled per-host)
     ../../modules/home/cli-tools.nix
