@@ -37,6 +37,8 @@
           pciutils
           nix-index
           screen
+          jq
+          nodejs
         ]
         ++ lib.optionals config.modules.common.devTools.enable [
           cmake
