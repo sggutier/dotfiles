@@ -9,4 +9,16 @@
   modules.desktop.apps.enable = true;
   modules.media.enable = true;
   modules.emacs.enable = true;
+
+  programs.ssh = {
+    enable = true;
+    matchBlocks = {
+      "wall-e" = {
+        user = "sggutier";
+        extraOptions = {
+          SendEnv = "COLORTERM";
+        };
+      };
+    };
+  };
 }
