@@ -96,6 +96,22 @@
     ];
   };
 
+  # Immich photo management
+  # Post-deploy: create media dir manually if it doesn't exist:
+  #   sudo mkdir -p /tank/immich && sudo chown immich:immich /tank/immich
+  services.immich = {
+    enable = true;
+    host = "0.0.0.0";
+    port = 2283;
+    mediaLocation = "/tank/immich";
+    openFirewall = true;
+    accelerationDevices = null;
+  };
+
+  # VA-API hardware acceleration for Immich video transcoding
+  hardware.graphics.enable = true;
+  users.users.immich.extraGroups = [ "video" "render" ];
+
   nixpkgs.config.allowUnfree = true;
 
   system.stateVersion = "25.11";
