@@ -23,7 +23,12 @@
     fsType = "ext4";
   };
 
-  boot.initrd.luks.devices."crypted".device = "/dev/disk/by-uuid/af768447-b9e4-4faa-b4e3-f46e351f0885";
+  boot.initrd.systemd.enable = true;
+
+  boot.initrd.luks.devices."crypted" = {
+    device = "/dev/disk/by-uuid/af768447-b9e4-4faa-b4e3-f46e351f0885";
+    crypttabExtraOpts = [ "tpm2-device=auto" ];
+  };
 
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/EAFB-9188";
