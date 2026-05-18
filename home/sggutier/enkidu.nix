@@ -9,6 +9,7 @@
   modules.desktop.apps.enable = true;
   modules.media.enable = true;
   modules.emacs.enable = true;
+  modules.photography.enable = true;
 
   programs.ssh = {
     enable = true;

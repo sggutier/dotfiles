@@ -16,6 +16,7 @@
     ../../modules/home/desktop/apps.nix
     ../../modules/home/media.nix
     ../../modules/home/emacs.nix
+    ../../modules/home/photography.nix
   ];
 
   home.username = "sggutier";
