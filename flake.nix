@@ -7,13 +7,15 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
+    helium-wv.url = "github:jcdickinson/helium-wv";
+
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, helium-wv, ... }@inputs:
     let
       system = "x86_64-linux";
 

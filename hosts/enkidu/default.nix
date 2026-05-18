@@ -48,6 +48,7 @@
   programs.adb.enable = true;
   programs.dconf.enable = true;
   programs.firefox.enable = true;
+  environment.systemPackages = [ inputs.helium-wv.packages.x86_64-linux.helium ];
 
   programs.steam = {
     enable = true;
