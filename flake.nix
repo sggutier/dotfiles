@@ -77,7 +77,7 @@
         wall-e = mkHost {
           hostname = "wall-e";
           userConfig = ./home/sggutier/wall-e.nix;
-          extraModules = [ inputs.sops-nix.nixosModules.sops-nix ];
+          extraModules = [ inputs."sops-nix".nixosModules.sops-nix ];
         };
       };
 
