@@ -13,6 +13,11 @@
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, helium-wv, ... }@inputs:
@@ -34,7 +39,7 @@
       };
 
       # Helper function to create a NixOS system configuration
-      mkHost = { hostname, userConfig }: nixpkgs.lib.nixosSystem {
+      mkHost = { hostname, userConfig, extraModules ? [] }: nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
@@ -43,6 +48,7 @@
 
           # Host configuration
           ./hosts/${hostname}
+        ] ++ extraModules ++ [
 
           # Home Manager as a NixOS module
           home-manager.nixosModules.home-manager

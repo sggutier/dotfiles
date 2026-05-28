@@ -96,6 +96,28 @@
     ];
   };
 
+  # Secrets management
+  sops = {
+    defaultSopsFile = ../../secrets/wall-e.yaml;
+    defaultSopsFormat = "yaml";
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    secrets."cloudflared-credentials" = {};
+  };
+
+  # Cloudflare tunnel
+  services.cloudflared = {
+    enable = true;
+    tunnels."immich" = {
+      credentialsFile = config.sops.secrets."cloudflared-credentials".path;
+      default = "http_status:404";
+      ingress = {
+        "photos.imacheapskate.fyi" = {
+          service = "http://localhost:2283";
+        };
+      };
+    };
+  };
+
   # Immich photo management
   # Post-deploy: create media dir manually if it doesn't exist:
   #   sudo mkdir -p /tank/immich && sudo chown immich:immich /tank/immich
