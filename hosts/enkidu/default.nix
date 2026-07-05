@@ -45,10 +45,12 @@
   users.defaultUserShell = pkgs.zsh;
   programs.partition-manager.enable = true;
   programs.kdeconnect.enable = true;
-  programs.adb.enable = true;
   programs.dconf.enable = true;
   programs.firefox.enable = true;
-  environment.systemPackages = [ inputs.helium-wv.packages.x86_64-linux.helium ];
+  environment.systemPackages = [
+    inputs.helium-wv.packages.x86_64-linux.helium
+    pkgs.android-tools
+  ];
 
   programs.steam = {
     enable = true;
@@ -106,7 +108,6 @@
       "wheel"
       "networkmanager"
       "dialout"
-      "adbusers"
       "scanner"
       "lp"
       "libvirtd"
@@ -131,7 +132,7 @@
   services.openssh.enable = true;
 
   # Suspend-then-hibernate
-  systemd.sleep.extraConfig = "HibernateDelaySec=2h";
+  systemd.sleep.settings.Sleep.HibernateDelaySec = "2h";
 
   # Enable common system packages module
   modules.common.enable = true;
