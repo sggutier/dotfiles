@@ -1,6 +1,6 @@
 keys:
   - &enkidu age1kpd52zhppnhypmfp26gxttk5j08n8gvwgxyt9xjj3c9wzff65uuqsrws8l
-  - &wall-e age1hnn643wutt0lalz5njjrhhertst5h0nersuxmz37awel8je6n30qfalhcz
+  - &wall-e age1chcnl730uxw32cp6vfyghujh2e67jgcuskp9vxhshqzr6m0spu5q6ujkjr
 
 creation_rules:
   - path_regex: secrets/wall-e\.yaml$
