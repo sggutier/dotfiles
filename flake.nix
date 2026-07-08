@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-master.url = "github:NixOS/nixpkgs/master";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
@@ -20,7 +21,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, helium-wv, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-master, home-manager, helium-wv, ... }@inputs:
     let
       system = "x86_64-linux";
 
@@ -38,13 +39,22 @@
         };
       };
 
+      # nixpkgs master overlay, for packages that need to track upstream
+      # ahead of even nixos-unstable (e.g. immich on wall-e)
+      masterOverlay = final: prev: {
+        master = import nixpkgs-master {
+          inherit system;
+          config.allowUnfree = true;
+        };
+      };
+
       # Helper function to create a NixOS system configuration
       mkHost = { hostname, userConfig, extraModules ? [] }: nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
           # Apply unstable overlay
-          { nixpkgs.overlays = [ unstableOverlay ]; }
+          { nixpkgs.overlays = [ unstableOverlay masterOverlay ]; }
 
           # Host configuration
           ./hosts/${hostname}

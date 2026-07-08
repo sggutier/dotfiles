@@ -134,8 +134,14 @@
   # Immich photo management
   # Post-deploy: create media dir manually if it doesn't exist:
   #   sudo mkdir -p /tank/immich && sudo chown immich:immich /tank/immich
+  #
+  # The tank postgres data was last migrated by an immich build from
+  # upstream master (has migrations newer than nixos-26.05's packaged
+  # 2.7.5), so pull immich from nixpkgs master too until the release
+  # channels catch up.
   services.immich = {
     enable = true;
+    package = pkgs.master.immich;
     host = "0.0.0.0";
     port = 2283;
     mediaLocation = "/tank/immich";
