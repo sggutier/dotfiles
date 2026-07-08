@@ -118,6 +118,19 @@
     };
   };
 
+  # PostgreSQL lives on tank so it survives OS disk failures. The data
+  # dir was created 2026-07-06 during the post-crash salvage; pin pg 17
+  # to match it regardless of the nixpkgs default.
+  services.postgresql = {
+    package = pkgs.postgresql_17;
+    dataDir = "/tank/postgres/17";
+  };
+  # Don't let postgres start (and initdb an empty dir) before tank is mounted
+  systemd.services.postgresql = {
+    after = [ "zfs-mount.service" ];
+    requires = [ "zfs-mount.service" ];
+  };
+
   # Immich photo management
   # Post-deploy: create media dir manually if it doesn't exist:
   #   sudo mkdir -p /tank/immich && sudo chown immich:immich /tank/immich
