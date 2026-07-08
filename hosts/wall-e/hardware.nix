@@ -1,11 +1,11 @@
 # Hardware configuration for wall-e (NAS)
 #
 # Disk layout:
-#   nvme0n1 (1TB TWSC) - OS drive:
+#   nvme0n1 (512GB Patriot P320) - OS drive:
 #     p1: 1GB   ESP (FAT32)
 #     p2: 16GB  swap (LUKS)
-#     p3: 800GB root (LUKS -> ext4)
-#     p4: 137GB ZFS L2ARC cache
+#     p3: rest (~460GB) root (LUKS -> ext4)
+#   (no L2ARC partition; the pool is all-NVMe so a read cache buys nothing)
 #
 #   nvme1n1 (WD Blue SN5000 4TB)  \
 #   nvme2n1 (WD Blue SN5000 4TB)   } ZFS raidz1 "tank" (~7.1TB usable)
@@ -24,6 +24,10 @@
 #
 #   2. Set up Samba password:
 #      sudo smbpasswd -a sggutier
+#
+#   3. Recreate the ZFS keyfile (content is the tank passphrase, no trailing newline):
+#      printf '%s' '<passphrase>' | sudo tee /etc/zfs/tank.key >/dev/null
+#      sudo chmod 400 /etc/zfs/tank.key
 #
 { config, lib, pkgs, modulesPath, ... }:
 
