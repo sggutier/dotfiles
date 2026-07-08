@@ -149,6 +149,13 @@
     accelerationDevices = null;
   };
 
+  # Pin uid/gid so /tank/immich ownership survives a reinstall. NixOS
+  # otherwise assigns system user/group ids dynamically in declaration
+  # order, which silently shifted after the 2026-07 reinstall and broke
+  # storage permission checks against data still owned by the old ids.
+  users.users.immich.uid = 998;
+  users.groups.immich.gid = 998;
+
   # VA-API hardware acceleration for Immich video transcoding
   hardware.graphics.enable = true;
   users.users.immich.extraGroups = [ "video" "render" ];
