@@ -81,7 +81,7 @@
       PermitRootLogin = "no";
       PasswordAuthentication = true;
       PubkeyAuthentication = true;
-      AcceptEnv = "COLORTERM";
+      AcceptEnv = [ "COLORTERM" ];
     };
   };
 
