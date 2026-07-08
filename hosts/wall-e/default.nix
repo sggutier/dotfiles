@@ -58,6 +58,21 @@
       share = true;
     };
     samba.enable = true;
+    samba.extraShares = {
+      # Read-only view of the immich admin library, exposed under a
+      # short share name so clients don't see the /tank/immich/library/admin
+      # path. "force user/group" so samba reads the immich-owned files
+      # regardless of the connecting user's unix permissions.
+      photos = {
+        path = "/tank/immich/library/admin";
+        browseable = "yes";
+        "read only" = "yes";
+        "guest ok" = "no";
+        "valid users" = "@nas";
+        "force user" = "immich";
+        "force group" = "immich";
+      };
+    };
     nfs = {
       enable = true;
       allowedNetworks = [ "192.168.0.0/24" ];
